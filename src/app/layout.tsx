@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
-import AccountNav from '@/components/AccountNav';
 
 export const metadata: Metadata = {
   title: "豆格 · 拼豆创作工作台 | BeadGrid",
@@ -43,7 +42,7 @@ export default function RootLayout({
       <body
         className="antialiased overflow-x-hidden bg-neutral-950 text-neutral-100"
       >
-        <AccountNav />
+
         {children}
         <footer className="px-4 py-6 text-center text-xs text-neutral-400">
           基于 Zippland / perler-beads · AGPL-3.0 · <a className="underline" href={process.env.NEXT_PUBLIC_SOURCE_URL || 'https://github.com/luoyuex/beadgrid'}>获取对应源码</a>

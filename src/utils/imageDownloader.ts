@@ -134,7 +134,7 @@ function showDownloads(files: { name: string; url: string }[], cached: boolean) 
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-label', '导出完成');
   const title = document.createElement('p'); title.textContent = cached ? '图纸已生成，可直接下载。' : '导出成功，请下载图纸与采购清单。'; panel.appendChild(title);
   for (const file of files) { const a = document.createElement('a'); a.href = file.url; a.textContent = '下载 ' + file.name; a.style.cssText = 'display:block;color:#dedede;margin:16px 0'; panel.appendChild(a); }
-  const note = document.createElement('p'); note.textContent = '链接最多有效 5 分钟，会员到期时失效。有效期内可在个人中心重新下载。'; note.style.fontSize = '12px'; panel.appendChild(note);
+  const note = document.createElement('p'); note.textContent = '会员有效期内可下载，也可在个人中心找到历史图纸。'; note.style.fontSize = '12px'; panel.appendChild(note);
   const close = document.createElement('button'); close.textContent = '关闭'; close.style.cssText = 'padding:10px 16px;margin-top:16px;border:1px solid #525252;border-radius:8px';
   const dismiss = () => { document.removeEventListener('keydown', escape); overlay.remove(); };
   const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') dismiss(); };

@@ -93,8 +93,7 @@ import MagnifierSelectionOverlay from '../components/MagnifierSelectionOverlay';
 import { loadPaletteSelections, savePaletteSelections, presetToSelections, PaletteSelections } from '../utils/localStorageUtils';
 import { TRANSPARENT_KEY, transparentColorData } from '../utils/pixelEditingUtils';
 
-// 1. 导入新的 DonationModal 组件
-import DonationModal from '../components/DonationModal';
+import AccountNav from '@/components/AccountNav';
 import FocusModePreDownloadModal from '../components/FocusModePreDownloadModal';
 
 export default function Home() {
@@ -128,7 +127,7 @@ export default function Home() {
   // 新增：一键擦除模式状态
   const [isEraseMode, setIsEraseMode] = useState<boolean>(false);
   // 新增状态变量：控制打赏弹窗
-  const [isDonationModalOpen, setIsDonationModalOpen] = useState<boolean>(false);
+
   const [customPaletteSelections, setCustomPaletteSelections] = useState<PaletteSelections>({});
   const [isCustomPaletteEditorOpen, setIsCustomPaletteEditorOpen] = useState<boolean>(false);
   const [isCustomPalette, setIsCustomPalette] = useState<boolean>(false);
@@ -183,7 +182,7 @@ export default function Home() {
   const [isFocusModePreDownloadModalOpen, setIsFocusModePreDownloadModalOpen] = useState<boolean>(false);
 
   // 新增：横屏设备弹窗状态
-  const [showDesktopModal, setShowDesktopModal] = useState<boolean>(false);
+
 
   // 新增：编辑撤回历史栈（多步）
   interface EditSnapshot {
@@ -1963,9 +1962,10 @@ export default function Home() {
     />
 
     {/* Apply dark mode styles to the main container */}
-    <div className="min-h-screen p-4 sm:p-6 flex flex-col items-center bg-neutral-950 font-[family-name:var(--font-geist-sans)] overflow-x-hidden">
+    <div className="bead-workspace min-h-screen p-4 sm:p-6 flex flex-col items-center bg-neutral-950 font-[family-name:var(--font-geist-sans)] overflow-x-hidden">
       {/* Apply dark mode styles to the header */}
       <header className="workspace-hero">
+        <div className="workspace-topline"><a href="/" className="workspace-brand"><img src="/icon.svg" alt="" />豆格 <span>BeadGrid</span></a><AccountNav /></div>
         <div className="workspace-hero-content">
           <p className="workspace-eyebrow">BEADGRID / 豆格 · 拼豆创作工作台</p>
           <div className="workspace-heading">
@@ -1975,76 +1975,6 @@ export default function Home() {
           <p className="workspace-description">上传图片，选择色板，精细调整每一个像素。图纸与采购清单，让下一件作品从这里开始。</p>
           <span className="workspace-meta">免费预览与编辑 · 会员有效期内不限导出</span>
 
-          {/* 横屏设备弹窗 */}
-          {showDesktopModal && (
-            <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 backdrop-blur-sm" onClick={() => setShowDesktopModal(false)}>
-              <div className="relative mx-4 w-full max-w-md rounded-2xl border border-neutral-700 dark:border-neutral-700 bg-neutral-900 dark:bg-neutral-900 p-6 shadow-2xl" onClick={e => e.stopPropagation()}>
-                <button
-                  onClick={() => setShowDesktopModal(false)}
-                  className="absolute top-3 right-3 text-neutral-400 hover:text-neutral-300 dark:hover:text-neutral-200 transition-colors"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5">
-                    <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
-                  </svg>
-                </button>
-                <div className="flex flex-col items-center text-center">
-                  <div className="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-neutral-800 dark:bg-neutral-950/40">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-6 h-6 text-neutral-400 dark:text-neutral-200">
-                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 0v8h12V4H4zm-1 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                    </svg>
-                  </div>
-                  <h3 className="text-lg font-semibold text-neutral-100 dark:text-white">专业工作台已上线</h3>
-                  <p className="mt-2 text-sm text-neutral-400 dark:text-neutral-400">专业工作台拥有更完整的功能和更好的操作体验，推荐前往使用。</p>
-                  <div className="mt-5 flex w-full gap-3">
-                    <button
-                      onClick={() => setShowDesktopModal(false)}
-                      className="flex-1 rounded-xl border border-neutral-700 dark:border-neutral-500 px-4 py-2.5 text-sm font-medium text-neutral-200 dark:text-neutral-200 hover:bg-neutral-900 dark:hover:bg-neutral-700 transition-colors"
-                    >
-                      留在此页
-                    </button>
-                    <a
-                      href="https://perlerbeads.zippland.com/"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-xl bg-neutral-700 px-4 py-2.5 text-sm font-medium text-white hover:bg-neutral-700 transition-colors"
-                    >
-                      前往专业工作台
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                        <path fillRule="evenodd" d="M3 10a1 1 0 011-1h9.586L11.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L13.586 11H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                      </svg>
-                    </a>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* 链接行：专业工作台· 小红书 · GitHub */}
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5 text-xs">
-            <a href="https://perlerbeads.zippland.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-1 text-neutral-300 dark:text-neutral-400 hover:text-neutral-100 dark:hover:text-neutral-200 font-medium transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-3.5 h-3.5">
-                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v8a1 1 0 01-1 1H4a1 1 0 01-1-1V4zm1 0v8h12V4H4zm-1 12a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-              </svg>
-              上游演示
-              <span className="px-1 py-px rounded bg-neutral-700 text-[9px] font-bold text-white leading-none">NEW</span>
-            </a>
-            <span className="text-neutral-200 dark:text-neutral-300">·</span>
-            <a href="https://www.xiaohongshu.com/user/profile/623e8b080000000010007721" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-neutral-400 dark:text-neutral-400 hover:text-neutral-200 dark:hover:text-neutral-200 font-medium transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 1024 1024" fill="currentColor">
-                <path d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64z m238.8 360.2l-57.7 93.3c-10.1 16.3-31.5 21.3-47.8 11.2l-112.4-69.5c-16.3-10.1-21.3-31.5-11.2-47.8l57.7-93.3c10.1-16.3 31.5-21.3 47.8-11.2l112.4 69.5c16.3 10.1 21.3 31.5 11.2 47.8zM448 496l-57.7 93.3c-10.1 16.3-31.5 21.3-47.8 11.2l-112.4-69.5c-16.3-10.1-21.3-31.5-11.2-47.8l57.7-93.3c10.1-16.3 31.5-21.3 47.8-11.2l112.4 69.5c16.3 10.1 21.3 31.5 11.2 47.8z m248.9 43.2l-57.7 93.3c-10.1 16.3-31.5 21.3-47.8 11.2l-112.4-69.5c-16.3-10.1-21.3-31.5-11.2-47.8l57.7-93.3c10.1-16.3 31.5-21.3 47.8-11.2l112.4 69.5c16.3 10.1 21.3 31.5 11.2 47.8z"/>
-              </svg>
-              小红书
-            </a>
-            <span className="text-neutral-200 dark:text-neutral-300">·</span>
-            <a href="https://github.com/Zippland/perler-beads" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-neutral-400 dark:text-neutral-400 hover:text-neutral-200 dark:hover:text-neutral-200 font-medium transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="currentColor">
-                <path fillRule="evenodd" d="M12 0C5.37 0 0 5.48 0 12.25c0 5.42 3.44 10.01 8.2 11.63.6.12.82-.27.82-.6 0-.3-.01-1.08-.02-2.13-3.34.74-4.04-1.65-4.04-1.65-.55-1.44-1.35-1.83-1.35-1.83-1.1-.78.08-.77.08-.77 1.21.09 1.85 1.26 1.85 1.26 1.08 1.9 2.83 1.35 3.52 1.03.11-.81.42-1.35.77-1.66-2.66-.31-5.46-1.36-5.46-6.06 0-1.34.46-2.43 1.22-3.29-.12-.31-.53-1.55.12-3.23 0 0 1-.33 3.29 1.25a10.96 10.96 0 0 1 5.98 0c2.29-1.58 3.29-1.25 3.29-1.25.65 1.68.24 2.92.12 3.23.76.86 1.22 1.95 1.22 3.29 0 4.71-2.81 5.74-5.49 6.05.43.38.81 1.13.81 2.28 0 1.65-.02 2.98-.02 3.39 0 .33.22.72.83.59C20.56 22.25 24 17.67 24 12.25 24 5.48 18.63 0 12 0Z" />
-              </svg>
-              上游源码
-            </a>
-          </div>
-          {/* 来源提示 */}
-          <p className="mt-2 text-[10px] text-neutral-400 dark:text-neutral-400">发布平台请标注来源或保留图片水印及标识</p>
         </div>
       </header>
 
@@ -2580,35 +2510,6 @@ export default function Home() {
           />
         </>
       )}
-
-      {/* Apply dark mode styles to the Footer */}
-      <footer className="w-full md:max-w-4xl mt-10 mb-6 py-6 text-center text-xs sm:text-sm text-neutral-400 dark:text-neutral-400 border-t border-neutral-700 dark:border-neutral-700 bg-neutral-800     rounded-lg shadow-inner">
-
-        {/* Donation button styles are likely fine */}
-        <button
-          onClick={() => setIsDonationModalOpen(true)}
-          className="mb-5 px-6 py-2.5 bg-neutral-800   text-white rounded-full shadow-lg transition-all duration-300 hover:shadow-xl hover:translate-y-[-2px] flex items-center justify-center mx-auto"
-        >
-          {/* SVG and Text inside button */}
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M18 8h1a2 2 0 0 1 2 2v1c0 1.1-.9 2-2 2h-1" fill="#c4c4c4" />
-            <path d="M6 8h12v9a3 3 0 0 1-3 3H9a3 3 0 0 1-3-3V8z" fill="#c4c4c4" />
-            <path d="M6 8V7a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3v1" fill="#a3a3a3" />
-            <path d="M12 16v-4" stroke="#303030" />
-            <path d="M9.5 14.5L9 16" stroke="#303030" />
-            <path d="M14.5 14.5L15 16" stroke="#303030" />
-          </svg>
-          <span>请作者喝一杯奶茶</span>
-        </button>
-
-        {/* Copyright text color */}
-        <p className="font-medium text-neutral-300 dark:text-neutral-200">
-          豆格 BeadGrid · 拼豆创作工作台 &copy; {new Date().getFullYear()}
-        </p>
-      </footer>
-
-      {/* Donation Modal - 现在使用新的组件 */}
-      <DonationModal isOpen={isDonationModalOpen} onClose={() => setIsDonationModalOpen(false)} />
 
       {/* 使用导入的下载设置弹窗组件 */}
       <DownloadSettingsModal

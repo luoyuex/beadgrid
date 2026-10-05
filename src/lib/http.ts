@@ -1,4 +1,5 @@
 import { headers } from 'next/headers';
+import { getSessionCookie } from 'better-auth/cookies';
 import { auth } from './auth';
 import { db } from './db';
 import { DomainError } from './membership/core.mjs';
@@ -7,7 +8,9 @@ export class HttpError extends Error {
   constructor(public status: number, message: string) { super(message); }
 }
 export async function requireUser(admin = false) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const requestHeaders = await headers();
+  if (!getSessionCookie(requestHeaders)) throw new HttpError(401, '请先登录');
+  const session = await auth.api.getSession({ headers: requestHeaders });
   if (!session) throw new HttpError(401, '请先登录');
   const user = await db.user.findUnique({ where: { id: session.user.id } });
   if (!user || user.banned) throw new HttpError(403, '账号已禁用');

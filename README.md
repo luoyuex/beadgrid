@@ -51,7 +51,7 @@ npm run dev
 | 服务端成品生成 | @napi-rs/canvas |
 | 账号 | Better Auth |
 | 数据库 | PostgreSQL、Prisma |
-| 文件存储 | 私有 S3 兼容对象存储、短期签名下载 |
+| 文件存储 | 私有 S3 兼容对象存储、同域鉴权下载 |
 
 ## 验证
 
