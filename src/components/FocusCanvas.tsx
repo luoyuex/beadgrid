@@ -54,7 +54,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
     // 设置画布尺寸
     const canvasWidth = gridDimensions.N * cellSize;
     const canvasHeight = gridDimensions.M * cellSize;
-    
+
     canvas.width = canvasWidth;
     canvas.height = canvasHeight;
     canvas.style.width = `${canvasWidth}px`;
@@ -89,13 +89,17 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
         ctx.fillStyle = fillColor;
         ctx.fillRect(x, y, cellSize, cellSize);
 
+        const markerColor = /^#[0-9a-f]{6}$/i.test(pixel.color) &&
+          [1, 3, 5].reduce((sum, offset) => sum + parseInt(pixel.color.slice(offset, offset + 2), 16), 0) / 3 > 150
+          ? '#0a0a0a' : '#f0f0f0';
+
         // 如果是已完成的格子且是当前颜色，添加勾选标记
         if (completedCells.has(cellKey) && pixel.color === currentColor) {
-          ctx.fillStyle = 'rgba(0, 255, 0, 0.6)';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.35)';
           ctx.fillRect(x, y, cellSize, cellSize);
-          
+
           // 绘制勾选图标
-          ctx.strokeStyle = '#fff';
+          ctx.strokeStyle = markerColor;
           ctx.lineWidth = 2;
           ctx.beginPath();
           ctx.moveTo(x + cellSize * 0.2, y + cellSize * 0.5);
@@ -105,21 +109,21 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
         }
 
         // 如果是推荐区域的一部分，添加高亮边框
-        const isInRecommendedRegion = recommendedRegion?.some(cell => 
+        const isInRecommendedRegion = recommendedRegion?.some(cell =>
           cell.row === row && cell.col === col
         );
         if (isInRecommendedRegion) {
-          ctx.strokeStyle = '#ff4444';
+          ctx.strokeStyle = markerColor;
           ctx.lineWidth = 3;
           ctx.setLineDash([5, 5]);
           ctx.strokeRect(x + 1, y + 1, cellSize - 2, cellSize - 2);
           ctx.setLineDash([]);
         }
-        
+
         // 如果是推荐区域的中心点，添加特殊标记
         if (recommendedCell && recommendedCell.row === row && recommendedCell.col === col && isInRecommendedRegion) {
           // 绘制中心点标记
-          ctx.fillStyle = '#ff4444';
+          ctx.fillStyle = markerColor;
           ctx.beginPath();
           ctx.arc(x + cellSize / 2, y + cellSize / 2, 4, 0, 2 * Math.PI);
           ctx.fill();
@@ -135,7 +139,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
     if (showSectionLines) {
       ctx.strokeStyle = sectionLineColor;
       ctx.lineWidth = 2;
-      
+
       // 绘制竖直分区线
       for (let col = gridSectionInterval; col < gridDimensions.N; col += gridSectionInterval) {
         const x = col * cellSize;
@@ -144,7 +148,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
         ctx.lineTo(x, canvasHeight);
         ctx.stroke();
       }
-      
+
       // 绘制水平分区线
       for (let row = gridSectionInterval; row < gridDimensions.M; row += gridSectionInterval) {
         const y = row * cellSize;
@@ -182,7 +186,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
   const getGridPosition = useCallback((x: number, y: number) => {
     const col = Math.floor(x / cellSize);
     const row = Math.floor(y / cellSize);
-    
+
     if (row >= 0 && row < gridDimensions.M && col >= 0 && col < gridDimensions.N) {
       return { row, col };
     }
@@ -202,7 +206,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
   // 处理点击
   const handleClick = useCallback((event: React.MouseEvent | React.TouchEvent) => {
     event.preventDefault();
-    
+
     const pos = getEventPosition(event);
     if (!pos) return;
 
@@ -215,7 +219,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
   // 处理缩放
   const handleWheel = useCallback((event: React.WheelEvent) => {
     event.preventDefault();
-    
+
     const delta = event.deltaY > 0 ? 0.9 : 1.1;
     const newScale = Math.max(0.3, Math.min(3, canvasScale * delta));
     onScaleChange(newScale);
@@ -242,17 +246,17 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
 
   const handleTouchMove = useCallback((event: React.TouchEvent) => {
     event.preventDefault();
-    
+
     if (event.touches.length === 1 && isDragging && lastPanPoint) {
       // 单指拖拽
       const deltaX = event.touches[0].clientX - lastPanPoint.x;
       const deltaY = event.touches[0].clientY - lastPanPoint.y;
-      
+
       onOffsetChange({
         x: canvasOffset.x + deltaX,
         y: canvasOffset.y + deltaY
       });
-      
+
       setLastPanPoint({
         x: event.touches[0].clientX,
         y: event.touches[0].clientY
@@ -261,11 +265,11 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
       // 双指缩放处理
       const currentDistance = getTouchDistance(event.touches);
       const scaleRatio = currentDistance / lastPinchDistance;
-      
+
       // 限制缩放范围并应用缩放
       const newScale = Math.max(0.3, Math.min(3, canvasScale * scaleRatio));
       onScaleChange(newScale);
-      
+
       // 更新距离记录
       setLastPinchDistance(currentDistance);
     }
@@ -276,7 +280,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
       setIsDragging(false);
       setLastPanPoint(null);
       setLastPinchDistance(null);
-      
+
       // 如果没有移动太多，视为点击
       if (!isDragging) {
         handleClick(event);
@@ -305,12 +309,12 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
     if (isDragging && lastPanPoint) {
       const deltaX = event.clientX - lastPanPoint.x;
       const deltaY = event.clientY - lastPanPoint.y;
-      
+
       onOffsetChange({
         x: canvasOffset.x + deltaX,
         y: canvasOffset.y + deltaY
       });
-      
+
       setLastPanPoint({
         x: event.clientX,
         y: event.clientY
@@ -329,9 +333,9 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
   }, [renderCanvas]);
 
   return (
-    <div 
+    <div
       ref={containerRef}
-      className="w-full h-full flex items-center justify-center overflow-hidden bg-gray-100"
+      className="w-full h-full flex items-center justify-center overflow-hidden bg-neutral-800"
       style={{ touchAction: 'none' }}
     >
       <div
@@ -342,7 +346,7 @@ const FocusCanvas: React.FC<FocusCanvasProps> = ({
       >
         <canvas
           ref={canvasRef}
-          className="cursor-crosshair border border-gray-300"
+          className="cursor-crosshair border border-neutral-700"
           onClick={handleClick}
           onWheel={handleWheel}
           onTouchStart={handleTouchStart}

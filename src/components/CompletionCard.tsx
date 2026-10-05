@@ -26,14 +26,14 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
   // 计算总豆子数（排除透明区域）
   const totalBeads = React.useMemo(() => {
     if (!mappedPixelData) return 0;
-    
+
     let count = 0;
     for (let row = 0; row < gridDimensions.M; row++) {
       for (let col = 0; col < gridDimensions.N; col++) {
         const pixel = mappedPixelData[row][col];
         // 排除透明色和空白区域
-        if (pixel.color && 
-            pixel.color !== 'transparent' && 
+        if (pixel.color &&
+            pixel.color !== 'transparent' &&
             pixel.color !== 'rgba(0,0,0,0)' &&
             !pixel.color.includes('rgba(0, 0, 0, 0)')) {
           count++;
@@ -48,7 +48,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hours > 0) {
       return `${hours}小时${minutes}分钟`;
     } else {
@@ -67,7 +67,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
     // 根据实际比例计算缩略图尺寸，保持宽高比
     const aspectRatio = gridDimensions.N / gridDimensions.M;
     const maxThumbnailSize = 200;
-    
+
     let thumbnailWidth, thumbnailHeight;
     if (aspectRatio > 1) {
       // 宽图
@@ -107,7 +107,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
     try {
       setIsCapturing(true);
       setCameraError(false);
-      const stream = await navigator.mediaDevices.getUserMedia({ 
+      const stream = await navigator.mediaDevices.getUserMedia({
         video: { facingMode: 'environment' } // 后置摄像头
       });
       if (videoRef.current) {
@@ -174,13 +174,13 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
       userImg.onload = () => {
         if (isUsingPixelArt) {
           // ===== 拼豆原图模式：原图占主导 =====
-          
+
           // 深色渐变背景，更有质感
           const gradient = ctx.createLinearGradient(0, 0, 0, cardHeight);
-          gradient.addColorStop(0, '#1a1a2e');
-          gradient.addColorStop(0.3, '#16213e');
-          gradient.addColorStop(0.7, '#0f3460');
-          gradient.addColorStop(1, '#533483');
+          gradient.addColorStop(0, '#0a0a0a');
+          gradient.addColorStop(0.3, '#101010');
+          gradient.addColorStop(0.7, '#181818');
+          gradient.addColorStop(1, '#242424');
           ctx.fillStyle = gradient;
           ctx.fillRect(0, 0, cardWidth, cardHeight);
 
@@ -188,7 +188,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           const imgAspectRatio = userImg.naturalWidth / userImg.naturalHeight;
           const maxWidth = cardWidth * 0.9;
           const maxHeight = cardHeight * 0.6;
-          
+
           let imageWidth, imageHeight;
           if (maxWidth / maxHeight > imgAspectRatio) {
             // 以高度为准
@@ -199,7 +199,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
             imageWidth = maxWidth;
             imageHeight = imageWidth / imgAspectRatio;
           }
-          
+
           const imageX = (cardWidth - imageWidth) / 2;
           const imageY = (cardHeight - imageHeight) / 2 - 80; // 往上偏移更多
 
@@ -214,7 +214,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           glowGradient.addColorStop(1, 'rgba(255,255,255,0)');
           ctx.fillStyle = glowGradient;
           ctx.fillRect(imageX - 30, imageY - 30, imageWidth + 60, imageHeight + 60);
-          
+
           // 白色边框背景
           ctx.fillStyle = '#ffffff';
           ctx.shadowColor = 'rgba(0,0,0,0.3)';
@@ -222,7 +222,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           ctx.shadowOffsetX = 0;
           ctx.shadowOffsetY = 15;
           const borderWidth = 12;
-          ctx.fillRect(imageX - borderWidth, imageY - borderWidth, 
+          ctx.fillRect(imageX - borderWidth, imageY - borderWidth,
                       imageWidth + borderWidth * 2, imageHeight + borderWidth * 2);
           ctx.restore();
 
@@ -240,7 +240,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
 
           // 底部信息区域：直接显示文字
           const infoY = imageY + imageHeight + 40;
-          
+
           // 信息文字 - 一行显示
           ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 22px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
@@ -252,22 +252,22 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           // 底部品牌信息
           ctx.font = '14px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           ctx.fillStyle = 'rgba(255,255,255,0.7)';
-          ctx.fillText('七卡瓦拼豆底稿生成器', cardWidth / 2, cardHeight - 50);
+          ctx.fillText('豆格 BeadGrid · 拼豆创作工作台', cardWidth / 2, cardHeight - 50);
           ctx.font = '12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
           ctx.fillStyle = 'rgba(255,255,255,0.5)';
           ctx.fillText('perlerbeadsold.zippland.com', cardWidth / 2, cardHeight - 25);
 
           resolve(canvas.toDataURL('image/jpeg', 0.95));
-          
+
         } else {
           // ===== 用户照片模式：照片占主导 =====
-          
+
           // 温暖渐变背景
           const gradient = ctx.createLinearGradient(0, 0, 0, cardHeight);
-          gradient.addColorStop(0, '#ff9a9e');
-          gradient.addColorStop(0.3, '#fecfef');
-          gradient.addColorStop(0.7, '#fecfef');
-          gradient.addColorStop(1, '#ff9a9e');
+          gradient.addColorStop(0, '#303030');
+          gradient.addColorStop(0.3, '#181818');
+          gradient.addColorStop(0.7, '#181818');
+          gradient.addColorStop(1, '#303030');
           ctx.fillStyle = gradient;
           ctx.fillRect(0, 0, cardWidth, cardHeight);
 
@@ -275,7 +275,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           const photoAspectRatio = userImg.naturalWidth / userImg.naturalHeight;
           const maxPhotoWidth = cardWidth * 0.85;
           const maxPhotoHeight = cardHeight * 0.6;
-          
+
           let photoWidth, photoHeight;
           if (maxPhotoWidth / maxPhotoHeight > photoAspectRatio) {
             // 以高度为准
@@ -286,7 +286,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
             photoWidth = maxPhotoWidth;
             photoHeight = photoWidth / photoAspectRatio;
           }
-          
+
           const photoX = (cardWidth - photoWidth) / 2;
           const photoY = (cardHeight - photoHeight) / 2 - 80;
 
@@ -296,7 +296,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
           ctx.strokeStyle = 'rgba(255,255,255,0.8)';
           ctx.lineWidth = 8;
           ctx.strokeRect(photoX - 15, photoY - 15, photoWidth + 30, photoHeight + 30);
-          
+
           // 内层白色边框背景
           ctx.fillStyle = '#ffffff';
           ctx.shadowColor = 'rgba(0,0,0,0.2)';
@@ -329,7 +329,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
               // 计算小缩略图尺寸，保持比例
               const maxThumbSize = 60;
               const thumbAspectRatio = thumbnailImg.naturalWidth / thumbnailImg.naturalHeight;
-              
+
               let thumbWidth, thumbHeight;
               if (thumbAspectRatio > 1) {
                 // 宽图
@@ -340,20 +340,20 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
                 thumbHeight = maxThumbSize;
                 thumbWidth = maxThumbSize * thumbAspectRatio;
               }
-              
+
               const thumbX = cardWidth / 2 - thumbWidth / 2;
               const thumbY = infoCardY + 80;
-              
+
               // 绘制小缩略图背景
               ctx.fillStyle = '#ffffff';
               ctx.shadowColor = 'rgba(0,0,0,0.3)';
               ctx.shadowBlur = 8;
               ctx.fillRect(thumbX - 3, thumbY - 3, thumbWidth + 6, thumbHeight + 6);
               ctx.shadowBlur = 0;
-               
+
               // 绘制小缩略图（保持宽高比）
               ctx.drawImage(thumbnailImg, thumbX, thumbY, thumbWidth, thumbHeight);
-               
+
               // 缩略图边框
               ctx.strokeStyle = '#ffffff';
               ctx.lineWidth = 3;
@@ -365,7 +365,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
               ctx.textAlign = 'center';
               ctx.shadowColor = 'rgba(0,0,0,0.5)';
               ctx.shadowBlur = 4;
-              ctx.fillText('七卡瓦拼豆底稿生成器', cardWidth / 2, cardHeight - 40);
+              ctx.fillText('豆格 BeadGrid · 拼豆创作工作台', cardWidth / 2, cardHeight - 40);
               ctx.font = '12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
               ctx.fillStyle = 'rgba(255,255,255,0.6)';
               ctx.fillText('perlerbeadsold.zippland.com', cardWidth / 2, cardHeight - 20);
@@ -381,7 +381,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
             ctx.textAlign = 'center';
             ctx.shadowColor = 'rgba(0,0,0,0.5)';
             ctx.shadowBlur = 4;
-            ctx.fillText('七卡瓦拼豆底稿生成器', cardWidth / 2, cardHeight - 40);
+            ctx.fillText('豆格 BeadGrid · 拼豆创作工作台', cardWidth / 2, cardHeight - 40);
             ctx.font = '12px system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
             ctx.fillStyle = 'rgba(255,255,255,0.6)';
             ctx.fillText('perlerbeadsold.zippland.com', cardWidth / 2, cardHeight - 20);
@@ -409,14 +409,14 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
   if (!isVisible) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+      <div className="bg-neutral-900 rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="text-center mb-6">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            <h2 className="text-2xl font-bold text-neutral-100 mb-2">
               🎉 作品完成 🎉
             </h2>
-            <div className="text-gray-600 space-y-1">
+            <div className="text-neutral-300 space-y-1">
               <p>总用时：{formatTime(totalElapsedTime)}</p>
               <p>共完成：{totalBeads} 颗豆子</p>
             </div>
@@ -426,12 +426,12 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
             <div className="text-center">
               {!isCapturing ? (
                 <div>
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-neutral-300 mb-4">
                     拍一张照片生成专属打卡图吧！
                   </p>
                   {cameraError && (
-                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mb-4">
-                      <p className="text-yellow-800 text-sm">
+                    <div className="bg-neutral-900 border border-neutral-700 rounded-lg p-3 mb-4">
+                      <p className="text-neutral-100 text-sm">
                         📱 无法访问相机，可能是权限限制或设备不支持。<br/>
                         你可以选择使用作品图生成打卡图。
                       </p>
@@ -440,13 +440,13 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
                   <div className="space-y-3">
                     <button
                       onClick={startCamera}
-                      className="w-full bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition-colors"
+                      className="w-full bg-neutral-700 text-white px-6 py-3 rounded-lg hover:bg-neutral-700 transition-colors"
                     >
                       📸 开启相机拍照
                     </button>
                     <button
                       onClick={skipPhoto}
-                      className="w-full bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors"
+                      className="w-full bg-neutral-700 text-white px-6 py-3 rounded-lg hover:bg-neutral-700 transition-colors"
                     >
                       🎨 跳过拍照，使用作品图
                     </button>
@@ -462,7 +462,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
                   />
                   <button
                     onClick={takePhoto}
-                    className="bg-green-500 text-white px-6 py-3 rounded-lg hover:bg-green-600 transition-colors mr-2"
+                    className="bg-neutral-700 text-white px-6 py-3 rounded-lg hover:bg-neutral-700 transition-colors mr-2"
                   >
                     📸 拍照
                   </button>
@@ -472,7 +472,7 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
                       stream?.getTracks().forEach(track => track.stop());
                       setIsCapturing(false);
                     }}
-                    className="bg-gray-500 text-white px-4 py-3 rounded-lg hover:bg-gray-600 transition-colors"
+                    className="bg-neutral-700 text-white px-4 py-3 rounded-lg hover:bg-neutral-700 transition-colors"
                   >
                     取消
                   </button>
@@ -490,13 +490,13 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
               <div className="space-y-3">
                 <button
                   onClick={downloadCard}
-                  className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-lg hover:from-purple-600 hover:to-pink-600 transition-colors"
+                  className="w-full bg-neutral-800   text-white py-3 rounded-lg   transition-colors"
                 >
                   📥 下载打卡图
                 </button>
                 <button
                   onClick={() => setUserPhoto(null)}
-                  className="w-full bg-gray-500 text-white py-2 rounded-lg hover:bg-gray-600 transition-colors"
+                  className="w-full bg-neutral-700 text-white py-2 rounded-lg hover:bg-neutral-700 transition-colors"
                 >
                   重新拍照
                 </button>
@@ -504,10 +504,10 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
             </div>
           )}
 
-          <div className="mt-6 pt-4 border-t border-gray-200">
+          <div className="mt-6 pt-4 border-t border-neutral-700">
             <button
               onClick={onClose}
-              className="w-full bg-gray-100 text-gray-600 py-2 rounded-lg hover:bg-gray-200 transition-colors"
+              className="w-full bg-neutral-800 text-neutral-300 py-2 rounded-lg hover:bg-neutral-800 transition-colors"
             >
               稍后再说
             </button>
@@ -522,4 +522,4 @@ const CompletionCard: React.FC<CompletionCardProps> = ({
   );
 };
 
-export default CompletionCard; 
+export default CompletionCard;

@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id            String @id
+  name          String
+  email         String @unique
+  emailVerified Boolean @default(false)
+  image         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  role          String @default("USER")
+  banned        Boolean @default(false)
+  sessions      Session[]
+  accounts      Account[]
+  wallet        Wallet?
+  redemptions   Redemption[]
+  ledger        Ledger[]
+  exports       ExportJob[]
+}
+model Session {
+  id        String @id
+  expiresAt DateTime
+  token     String @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
+}
+model Account {
+  id                    String @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+  @@index([userId])
+  @@unique([providerId, accountId])
+}
+model Verification {
+  id         String @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  @@index([identifier])
+}
+model Wallet {
+  userId    String @id
+  balance   Int @default(0)
+  reserved  Int @default(0)
+  user      User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt
+}
+model CardBatch {
+  id        String @id @default(cuid())
+  credits   Int
+  count     Int
+  expiresAt DateTime?
+  createdAt DateTime @default(now())
+  cards     Card[]
+}
+model Card {
+  id           String @id @default(cuid())
+  digest       String @unique
+  suffix       String
+  batchId      String
+  batch        CardBatch @relation(fields: [batchId], references: [id])
+  status       String @default("UNUSED")
+  redeemedAt   DateTime?
+  redemption   Redemption?
+  @@index([batchId, status])
+}
+model Redemption {
+  id        String @id @default(cuid())
+  cardId    String @unique
+  card      Card @relation(fields: [cardId], references: [id])
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  credits   Int
+  createdAt DateTime @default(now())
+  @@index([userId, createdAt])
+}
+model Ledger {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  delta     Int
+  reason    String
+  reference String @unique
+  createdAt DateTime @default(now())
+  @@index([userId, createdAt])
+}
+model ExportJob {
+  id        String @id @default(cuid())
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  hash      String
+  status    String @default("PROCESSING")
+  attempt   String
+  leaseUntil DateTime
+  files     Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, hash])
+  @@index([status, leaseUntil])
+}
+model Audit {
+  id        String @id @default(cuid())
+  actorId   String
+  action    String
+  targetId  String
+  detail    Json
+  createdAt DateTime @default(now())
+}
+model RateLimit {
+  id          String @id
+  key         String @unique
+  count       Int
+  lastRequest Float
+}
+model RequestLimit {
+  key      String @id
+  count    Int @default(0)
+  resetAt  DateTime
+}

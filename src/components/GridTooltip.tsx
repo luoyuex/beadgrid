@@ -18,16 +18,16 @@ const GridTooltip: React.FC<GridTooltipProps> = ({ tooltipData, selectedColorSys
 
   return (
     <div
-      className="absolute bg-gray-800 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none flex items-center space-x-1.5 z-50"
+      className="absolute bg-neutral-900 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none flex items-center space-x-1.5 z-50"
       style={{
-        left: `${tooltipData.x}px`, 
+        left: `${tooltipData.x}px`,
         top: `${tooltipData.y - 25}px`, // 向上偏移，使提示框显示在鼠标上方
         transform: 'translate(-50%, -100%)', // 水平居中，不再垂直偏移
         whiteSpace: 'nowrap',
       }}
     >
       <span
-        className="inline-block w-3 h-3 rounded-sm border border-gray-400 dark:border-gray-500 flex-shrink-0"
+        className="inline-block w-3 h-3 rounded-sm border border-neutral-600 dark:border-neutral-400 flex-shrink-0"
         style={{ backgroundColor: tooltipData.color }}
       ></span>
       <span className="font-mono font-semibold">{getDisplayColorKey(tooltipData.color, selectedColorSystem)}</span>
@@ -35,4 +35,4 @@ const GridTooltip: React.FC<GridTooltipProps> = ({ tooltipData, selectedColorSys
   );
 };
 
-export default GridTooltip; 
+export default GridTooltip;

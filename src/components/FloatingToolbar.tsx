@@ -28,8 +28,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         onClick={onTogglePalette}
         className={`w-12 h-12 rounded-full shadow-lg transition-all duration-200 flex items-center justify-center ${
           isPaletteOpen
-            ? 'bg-blue-500 text-white hover:bg-blue-600'
-            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
+            ? 'bg-neutral-700 text-white hover:bg-neutral-700'
+            : 'bg-neutral-900 dark:bg-neutral-900 text-neutral-200 dark:text-neutral-200 hover:bg-neutral-900 dark:hover:bg-neutral-700 border border-neutral-700 dark:border-neutral-500'
         }`}
         title={isPaletteOpen ? '关闭调色盘' : '打开调色盘'}
       >
@@ -43,8 +43,8 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
         onClick={onToggleMagnifier}
         className={`w-12 h-12 rounded-full shadow-lg transition-all duration-200 flex items-center justify-center ${
           isMagnifierActive
-            ? 'bg-green-500 text-white hover:bg-green-600'
-            : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600'
+            ? 'bg-neutral-700 text-white hover:bg-neutral-700'
+            : 'bg-neutral-900 dark:bg-neutral-900 text-neutral-200 dark:text-neutral-200 hover:bg-neutral-900 dark:hover:bg-neutral-700 border border-neutral-700 dark:border-neutral-500'
         }`}
         title={isMagnifierActive ? '关闭放大镜' : '打开放大镜'}
       >
@@ -56,7 +56,7 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
       {/* 退出手动编辑模式按钮 */}
       <button
         onClick={onExitManualMode}
-        className="w-12 h-12 rounded-full bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all duration-200 flex items-center justify-center"
+        className="w-12 h-12 rounded-full bg-neutral-700 text-white shadow-lg hover:bg-neutral-700 transition-all duration-200 flex items-center justify-center"
         title="退出手动编辑模式"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,4 +67,4 @@ const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
   );
 };
 
-export default FloatingToolbar; 
+export default FloatingToolbar;

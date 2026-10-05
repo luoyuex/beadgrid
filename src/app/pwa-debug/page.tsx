@@ -82,50 +82,50 @@ export default function PWADebug() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-8">
+    <div className="min-h-screen bg-neutral-900 dark:bg-neutral-950 p-8">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold mb-8">PWA 调试信息</h1>
-        
+
         <div className="space-y-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
+          <div className="bg-neutral-900 dark:bg-neutral-900 rounded-lg p-6 shadow">
             <h2 className="text-xl font-semibold mb-4">基本检查</h2>
             <ul className="space-y-2">
               <li className="flex items-center gap-2">
-                <span className={`w-4 h-4 rounded-full ${debugInfo.https ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`w-4 h-4 rounded-full ${debugInfo.https ? 'bg-neutral-700' : 'bg-neutral-700'}`}></span>
                 HTTPS: {debugInfo.https ? '是' : '否'} ({typeof window !== 'undefined' ? window.location.protocol : 'N/A'})
               </li>
               <li className="flex items-center gap-2">
-                <span className={`w-4 h-4 rounded-full ${debugInfo.serviceWorker ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`w-4 h-4 rounded-full ${debugInfo.serviceWorker ? 'bg-neutral-700' : 'bg-neutral-700'}`}></span>
                 Service Worker: {JSON.stringify(debugInfo.serviceWorker, null, 2)}
               </li>
               <li className="flex items-center gap-2">
-                <span className={`w-4 h-4 rounded-full ${debugInfo.standalone ? 'bg-green-500' : 'bg-gray-400'}`}></span>
+                <span className={`w-4 h-4 rounded-full ${debugInfo.standalone ? 'bg-neutral-700' : 'bg-neutral-600'}`}></span>
                 独立模式: {debugInfo.standalone ? '是' : '否'}
               </li>
               <li className="flex items-center gap-2">
-                <span className={`w-4 h-4 rounded-full ${debugInfo.installPromptSupported ? 'bg-green-500' : 'bg-red-500'}`}></span>
+                <span className={`w-4 h-4 rounded-full ${debugInfo.installPromptSupported ? 'bg-neutral-700' : 'bg-neutral-700'}`}></span>
                 安装提示支持: {debugInfo.installPromptSupported ? '支持' : '不支持'}
               </li>
             </ul>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
+          <div className="bg-neutral-900 dark:bg-neutral-900 rounded-lg p-6 shadow">
             <h2 className="text-xl font-semibold mb-4">Manifest 信息</h2>
-            <pre className="bg-gray-100 dark:bg-gray-900 p-4 rounded overflow-auto">
+            <pre className="bg-neutral-800 dark:bg-neutral-950 p-4 rounded overflow-auto">
               {JSON.stringify(debugInfo.manifest, null, 2)}
             </pre>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow">
+          <div className="bg-neutral-900 dark:bg-neutral-900 rounded-lg p-6 shadow">
             <h2 className="text-xl font-semibold mb-4">手动安装方法</h2>
-            <div className="space-y-2 text-gray-600 dark:text-gray-300">
+            <div className="space-y-2 text-neutral-300 dark:text-neutral-200">
               <p><strong>iOS Safari:</strong></p>
               <ol className="list-decimal list-inside ml-4">
                 <li>点击分享按钮（方框带向上箭头）</li>
                 <li>选择&ldquo;添加到主屏幕&rdquo;</li>
                 <li>点击&ldquo;添加&rdquo;</li>
               </ol>
-              
+
               <p className="mt-4"><strong>Android Chrome/Edge:</strong></p>
               <ol className="list-decimal list-inside ml-4">
                 <li>点击菜单（三个点）</li>

@@ -25,7 +25,7 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   const [selectionStart, setSelectionStart] = useState<{ x: number; y: number } | null>(null);
   const [selectionEnd, setSelectionEnd] = useState<{ x: number; y: number } | null>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
-  
+
   // 滚动禁用状态
   const scrollDisabledRef = useRef<boolean>(false);
   const savedScrollPositionRef = useRef<number>(0);
@@ -38,32 +38,32 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
 
   const disableScroll = useCallback(() => {
     if (scrollDisabledRef.current) return; // 避免重复禁用
-    
+
     // 保存当前滚动位置
     savedScrollPositionRef.current = window.scrollY;
-    
+
     // 设置CSS样式
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
-    
+
     // 阻止滚动事件（但不使用fixed定位，避免跳转问题）
     document.addEventListener('wheel', preventScrolling, { passive: false });
     document.addEventListener('touchmove', preventScrolling, { passive: false });
-    
+
     scrollDisabledRef.current = true;
   }, [preventScrolling]);
-  
+
   const enableScroll = useCallback(() => {
     if (!scrollDisabledRef.current) return; // 避免重复启用
-    
+
     // 恢复CSS样式
     document.body.style.overflow = '';
     document.documentElement.style.overflow = '';
-    
+
     // 移除事件监听器
     document.removeEventListener('wheel', preventScrolling);
     document.removeEventListener('touchmove', preventScrolling);
-    
+
     scrollDisabledRef.current = false;
     // 不再强制恢复滚动位置，让浏览器保持自然状态
   }, [preventScrolling]);
@@ -71,18 +71,18 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   // 获取画布相对坐标 - 优化移动设备支持
   const getCanvasCoordinates = useCallback((clientX: number, clientY: number) => {
     if (!canvasRef.current) return null;
-    
+
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    
+
     // 考虑设备像素比和画布缩放
     const scaleX = canvas.width / rect.width;
     const scaleY = canvas.height / rect.height;
-    
+
     // 计算相对于画布的坐标
     const x = (clientX - rect.left) * scaleX;
     const y = (clientY - rect.top) * scaleY;
-    
+
     return {
       x: Math.max(0, Math.min(canvas.width, x)),
       y: Math.max(0, Math.min(canvas.height, y))
@@ -92,15 +92,15 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   // 将像素坐标转换为网格坐标
   const pixelToGrid = useCallback((x: number, y: number) => {
     if (!gridDimensions || !canvasRef.current) return null;
-    
+
     const canvasWidth = canvasRef.current.width;
     const canvasHeight = canvasRef.current.height;
     const cellWidth = canvasWidth / gridDimensions.N;
     const cellHeight = canvasHeight / gridDimensions.M;
-    
+
     const col = Math.floor(x / cellWidth);
     const row = Math.floor(y / cellHeight);
-    
+
     return {
       row: Math.max(0, Math.min(gridDimensions.M - 1, row)),
       col: Math.max(0, Math.min(gridDimensions.N - 1, col))
@@ -110,10 +110,10 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   // 处理鼠标事件
   const handleMouseDown = useCallback((event: React.MouseEvent) => {
     if (!isActive) return;
-    
+
     const coords = getCanvasCoordinates(event.clientX, event.clientY);
     if (!coords) return;
-    
+
     setIsSelecting(true);
     setSelectionStart(coords);
     setSelectionEnd(coords);
@@ -123,10 +123,10 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
 
   const handleMouseMove = useCallback((event: MouseEvent) => {
     if (!isSelecting || !selectionStart) return;
-    
+
     const coords = getCanvasCoordinates(event.clientX, event.clientY);
     if (!coords) return;
-    
+
     setSelectionEnd(coords);
   }, [isSelecting, selectionStart, getCanvasCoordinates]);
 
@@ -135,10 +135,10 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
       enableScroll(); // 确保恢复滚动
       return;
     }
-    
+
     const startGrid = pixelToGrid(selectionStart.x, selectionStart.y);
     const endGrid = pixelToGrid(selectionEnd.x, selectionEnd.y);
-    
+
     if (startGrid && endGrid) {
       const area: SelectionArea = {
         startRow: Math.min(startGrid.row, endGrid.row),
@@ -146,10 +146,10 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
         endRow: Math.max(startGrid.row, endGrid.row),
         endCol: Math.max(startGrid.col, endGrid.col)
       };
-      
+
       onSelectionComplete(area);
     }
-    
+
     setIsSelecting(false);
     setSelectionStart(null);
     setSelectionEnd(null);
@@ -159,17 +159,17 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   // 处理触摸事件
   const handleTouchStart = useCallback((event: React.TouchEvent) => {
     if (!isActive) return;
-    
+
     // 先阻止默认行为，避免滚动干扰
     event.preventDefault();
     event.stopPropagation();
-    
+
     const touch = event.touches[0];
     if (!touch) return;
-    
+
     const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
     if (!coords) return;
-    
+
     setIsSelecting(true);
     setSelectionStart(coords);
     setSelectionEnd(coords);
@@ -178,17 +178,17 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
 
   const handleTouchMove = useCallback((event: TouchEvent) => {
     if (!isSelecting || !selectionStart) return;
-    
+
     // 先阻止默认行为
     event.preventDefault();
     event.stopPropagation();
-    
+
     const touch = event.touches[0];
     if (!touch) return;
-    
+
     const coords = getCanvasCoordinates(touch.clientX, touch.clientY);
     if (!coords) return;
-    
+
     setSelectionEnd(coords);
   }, [isSelecting, selectionStart, getCanvasCoordinates]);
 
@@ -203,7 +203,7 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
       document.addEventListener('mouseup', handleMouseUp);
       document.addEventListener('touchmove', handleTouchMove);
       document.addEventListener('touchend', handleTouchEnd);
-      
+
       return () => {
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
@@ -234,32 +234,32 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   // 计算选择框的样式
   const getSelectionStyle = useCallback(() => {
     if (!selectionStart || !selectionEnd || !canvasRef.current) return {};
-    
+
     const canvas = canvasRef.current;
     const rect = canvas.getBoundingClientRect();
-    
+
     // 将画布坐标转换回屏幕坐标
     const scaleX = rect.width / canvas.width;
     const scaleY = rect.height / canvas.height;
-    
+
     const screenStartX = selectionStart.x * scaleX;
     const screenStartY = selectionStart.y * scaleY;
     const screenEndX = selectionEnd.x * scaleX;
     const screenEndY = selectionEnd.y * scaleY;
-    
+
     const minX = Math.min(screenStartX, screenEndX);
     const minY = Math.min(screenStartY, screenEndY);
     const maxX = Math.max(screenStartX, screenEndX);
     const maxY = Math.max(screenStartY, screenEndY);
-    
+
     return {
       left: rect.left + minX,
       top: rect.top + minY,
       width: maxX - minX,
       height: maxY - minY,
       position: 'fixed' as const,
-      border: '2px solid #10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      border: '2px solid #dedede',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
       pointerEvents: 'none' as const,
       zIndex: 1000
     };
@@ -273,7 +273,7 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
       <div
         ref={overlayRef}
         className="fixed inset-0 z-50"
-        style={{ 
+        style={{
           cursor: 'crosshair',
           pointerEvents: isActive ? 'auto' : 'none'
         }}
@@ -283,7 +283,7 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
         onTouchMove={(e) => e.preventDefault()}
         onScroll={(e) => e.preventDefault()}
       />
-      
+
       {/* 选择框 */}
       {isSelecting && selectionStart && selectionEnd && (
         <div style={getSelectionStyle()} />
@@ -292,4 +292,4 @@ const MagnifierSelectionOverlay: React.FC<MagnifierSelectionOverlayProps> = ({
   );
 };
 
-export default MagnifierSelectionOverlay; 
+export default MagnifierSelectionOverlay;

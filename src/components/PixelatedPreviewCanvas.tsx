@@ -32,7 +32,7 @@ const drawPixelatedCanvas = (
     console.warn("drawPixelatedCanvas: Missing required parameters");
     return;
   }
-  
+
   const pixelatedCtx = canvas.getContext('2d');
   if (!pixelatedCtx) {
     console.error("Failed to get 2D context for pixelated canvas");
@@ -43,8 +43,8 @@ const drawPixelatedCanvas = (
   const isDarkMode = typeof window !== 'undefined' && document.documentElement.classList.contains('dark');
 
   // Define colors based on mode
-  const externalBackgroundColor = isDarkMode ? '#374151' : '#F3F4F6'; // gray-700 : gray-100
-  const gridLineColor = isDarkMode ? '#4B5563' : '#DDDDDD'; // gray-600 : lighter gray
+  const externalBackgroundColor = isDarkMode ? '#303030' : '#F3F3F3';
+  const gridLineColor = isDarkMode ? '#525252' : '#DDDDDD';
 
   const { N, M } = dims;
   const outputWidth = canvas.width;
@@ -74,7 +74,7 @@ const drawPixelatedCanvas = (
       // 如果正在高亮且当前单元格不是目标颜色，添加半透明黑色蒙版
       if (isHighlighting && highlightColorKey) {
         let shouldDim = false;
-        
+
         if (cellData.isExternal) {
           // 外部单元格总是变深色（因为它们不是要高亮的颜色）
           shouldDim = true;
@@ -82,7 +82,7 @@ const drawPixelatedCanvas = (
           // 内部单元格：如果颜色不匹配则变深色
           shouldDim = cellData.color.toUpperCase() !== highlightColorKey.toUpperCase();
         }
-        
+
         if (shouldDim) {
           pixelatedCtx.fillStyle = 'rgba(0, 0, 0, 0.6)'; // 60% 透明度的黑色蒙版
           pixelatedCtx.fillRect(drawX, drawY, cellWidthOutput, cellHeightOutput);
@@ -158,7 +158,7 @@ const PixelatedPreviewCanvas: React.FC<PixelatedPreviewCanvasProps> = ({
   }, [highlightColorKey, mappedPixelData, gridDimensions, onHighlightComplete]);
 
   // --- 鼠标事件处理 ---
-  
+
   // 鼠标移动时显示提示
   const handleMouseMove = (event: MouseEvent<HTMLCanvasElement>) => {
     // 只有在非手动模式下才通过mousemove显示tooltip，避免干扰手动上色
@@ -202,15 +202,15 @@ const PixelatedPreviewCanvas: React.FC<PixelatedPreviewCanvasProps> = ({
     }
     // 注意：此处不再触发手动上色 (isClick: true)
   };
-  
+
   // 触摸移动时检测是否需要隐藏提示
   const handleTouchMove = (event: TouchEvent<HTMLCanvasElement>) => {
     const touch = event.touches[0];
     if (!touch || !touchStartPosRef.current) return;
-    
+
     const dx = Math.abs(touch.clientX - touchStartPosRef.current.x);
     const dy = Math.abs(touch.clientY - touchStartPosRef.current.y);
-    
+
     // 如果移动超过阈值，则标记为已移动，并隐藏tooltip
     // 增加一个稍大的阈值，以更好地区分点击和微小的手指抖动/滑动意图
     if (!touchMovedRef.current && (dx > 10 || dy > 10)) {
@@ -219,7 +219,7 @@ const PixelatedPreviewCanvas: React.FC<PixelatedPreviewCanvasProps> = ({
       onInteraction(0, 0, 0, 0, false, true);
     }
   };
-  
+
   // 触摸结束时不再自动隐藏提示框
   const handleTouchEnd = () => {
     // 检查是否是手动模式，并且触摸没有移动（判定为点击）
@@ -246,7 +246,7 @@ const PixelatedPreviewCanvas: React.FC<PixelatedPreviewCanvasProps> = ({
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd} // 添加 onTouchCancel 以处理触摸中断的情况
-      className={`border border-gray-300 dark:border-gray-600 max-w-full h-auto rounded block ${
+      className={`border border-neutral-700 dark:border-neutral-500 max-w-full h-auto rounded block ${
         isManualColoringMode ? 'cursor-pointer' : 'cursor-grab' // 改为 grab 光标提示可以拖动
       }`}
       style={{
@@ -257,4 +257,4 @@ const PixelatedPreviewCanvas: React.FC<PixelatedPreviewCanvasProps> = ({
   );
 };
 
-export default PixelatedPreviewCanvas; 
+export default PixelatedPreviewCanvas;

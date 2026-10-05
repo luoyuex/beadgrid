@@ -31,7 +31,7 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
 
     // emoji和彩带选项
     const celebrationEmojis = ['🎉', '🎊', '✨', '🌟', '💫', '🎈', '🎁', '🏆'];
-    const confettiColors = ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4', '#feca57', '#ff9ff3', '#54a0ff'];
+    const confettiColors = ['#fafafa', '#dedede', '#c4c4c4', '#a3a3a3', '#858585', '#525252', '#303030'];
 
     // 创建emoji粒子
     const newParticles: Particle[] = [];
@@ -83,9 +83,9 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
         rotation: particle.rotation + particle.rotationSpeed,
         opacity: Math.max(0, particle.opacity - 0.02),
         vy: particle.vy + 0.1 // 重力效果
-      })).filter(particle => 
-        particle.x > -100 && 
-        particle.x < window.innerWidth + 100 && 
+      })).filter(particle =>
+        particle.x > -100 &&
+        particle.x < window.innerWidth + 100 &&
         particle.y < window.innerHeight + 100 &&
         particle.opacity > 0
       ));
@@ -97,9 +97,9 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
         rotation: particle.rotation + particle.rotationSpeed,
         opacity: Math.max(0, particle.opacity - 0.015),
         vy: particle.vy + 0.08 // 稍微轻一点的重力
-      })).filter(particle => 
-        particle.x > -50 && 
-        particle.x < window.innerWidth + 50 && 
+      })).filter(particle =>
+        particle.x > -50 &&
+        particle.x < window.innerWidth + 50 &&
         particle.y < window.innerHeight + 50 &&
         particle.opacity > 0
       ));
@@ -162,7 +162,7 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
       ))}
 
       {/* 中央庆祝文字 */}
-      <div 
+      <div
         className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-center animate-bounce"
         style={{
           animationDuration: '0.6s',
@@ -170,7 +170,7 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
           animationFillMode: 'both'
         }}
       >
-        <div className="text-4xl font-bold text-yellow-400 drop-shadow-lg animate-pulse">
+        <div className="text-4xl font-bold text-neutral-400 drop-shadow-lg animate-pulse">
           🎉完成🎉
         </div>
         <div className="text-lg text-white drop-shadow-md mt-2">
@@ -181,4 +181,4 @@ const CelebrationAnimation: React.FC<CelebrationAnimationProps> = ({
   );
 };
 
-export default CelebrationAnimation; 
+export default CelebrationAnimation;

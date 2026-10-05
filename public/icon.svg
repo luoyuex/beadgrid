@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">豆格 BeadGrid</title>
+  <rect width="512" height="512" rx="112" fill="#101010"/>
+  <g fill="#dedede">
+    <rect x="128" y="128" width="52" height="52" rx="10"/>
+    <rect x="196" y="128" width="52" height="52" rx="10"/>
+    <rect x="264" y="128" width="52" height="52" rx="10" fill="#737373"/>
+    <rect x="332" y="128" width="52" height="52" rx="10" fill="#a3a3a3"/>
+    <rect x="128" y="196" width="52" height="52" rx="10"/>
+    <rect x="196" y="196" width="52" height="52" rx="10" fill="#737373"/>
+    <rect x="264" y="196" width="52" height="52" rx="10"/>
+    <rect x="332" y="196" width="52" height="52" rx="10" fill="#a3a3a3"/>
+    <rect x="128" y="264" width="52" height="52" rx="10" fill="#737373"/>
+    <rect x="196" y="264" width="52" height="52" rx="10"/>
+    <rect x="264" y="264" width="52" height="52" rx="10"/>
+    <rect x="332" y="264" width="52" height="52" rx="10" fill="#a3a3a3"/>
+    <rect x="128" y="332" width="52" height="52" rx="10"/>
+    <rect x="196" y="332" width="52" height="52" rx="10"/>
+    <rect x="264" y="332" width="52" height="52" rx="10" fill="#737373"/>
+    <rect x="332" y="332" width="52" height="52" rx="10" fill="#a3a3a3"/>
+  </g>
+</svg>

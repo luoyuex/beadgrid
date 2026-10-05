@@ -1,14 +1,26 @@
 {
-  "name": "perler-beads",
+  "name": "beadgrid",
+  "description": "Image-to-pattern bead studio with editing, exports, and credit-based membership.",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test:membership": "node --test tests/*.test.mjs",
+    "db:generate": "prisma generate",
+    "db:deploy": "prisma migrate deploy",
+    "admin:grant": "node scripts/grant-admin.mjs",
+    "exports:recover": "node scripts/recover-exports.mjs"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.922.0",
+    "@aws-sdk/s3-request-presigner": "^3.922.0",
+    "@prisma/client": "6.19.0",
+    "better-auth": "^1.4.18",
+    "@napi-rs/canvas": "^0.1.80",
+    "nodemailer": "^7.0.10",
     "@vercel/analytics": "^1.5.0",
     "next": "15.3.6",
     "next-pwa": "^5.6.0",
@@ -16,6 +28,8 @@
     "react-dom": "^19.0.0"
   },
   "devDependencies": {
+    "prisma": "6.19.0",
+    "@types/nodemailer": "^7.0.4",
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",

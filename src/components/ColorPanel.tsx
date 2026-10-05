@@ -25,7 +25,7 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
 
   // 过滤和排序颜色
   const filteredAndSortedColors = colors
-    .filter(color => 
+    .filter(color =>
       color.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       color.color.toLowerCase().includes(searchTerm.toLowerCase())
     )
@@ -45,11 +45,11 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
     });
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-end">
-      <div className="w-full bg-white rounded-t-2xl max-h-[80vh] flex flex-col">
+    <div className="fixed inset-0 bg-black/70 z-50 flex items-end">
+      <div className="w-full bg-neutral-900 rounded-t-2xl max-h-[80vh] flex flex-col">
         {/* 拖拽指示条 */}
         <div className="flex justify-center py-2">
-          <div className="w-10 h-1 bg-gray-300 rounded-full"></div>
+          <div className="w-10 h-1 bg-neutral-700 rounded-full"></div>
         </div>
 
         {/* 搜索框 */}
@@ -60,12 +60,12 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
               placeholder="搜索颜色..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
             />
-            <svg 
-              className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" 
-              fill="none" 
-              stroke="currentColor" 
+            <svg
+              className="absolute left-3 top-2.5 h-5 w-5 text-neutral-400"
+              fill="none"
+              stroke="currentColor"
               viewBox="0 0 24 24"
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -78,7 +78,7 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value as 'progress' | 'name' | 'total')}
-            className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full p-2 border border-neutral-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-400"
           >
             <option value="progress">按进度排序</option>
             <option value="name">按名称排序</option>
@@ -98,37 +98,37 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
                 key={colorInfo.color}
                 onClick={() => onColorSelect(colorInfo.color)}
                 className={`w-full p-3 mb-2 rounded-lg border-2 transition-all ${
-                  isSelected 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-200 bg-white hover:border-gray-300'
+                  isSelected
+                    ? 'border-neutral-400 bg-neutral-900'
+                    : 'border-neutral-700 bg-neutral-900 hover:border-neutral-700'
                 } ${isCompleted ? 'opacity-60' : ''}`}
               >
                 <div className="flex items-center justify-between">
                   <div className="flex items-center space-x-3">
                     <div
-                      className="w-10 h-10 rounded-full border-2 border-gray-300 flex-shrink-0"
+                      className="w-10 h-10 rounded-full border-2 border-neutral-700 flex-shrink-0"
                       style={{ backgroundColor: colorInfo.color }}
                     />
                     <div className="text-left">
-                      <div className="text-sm font-medium text-gray-800 font-mono">
+                      <div className="text-sm font-medium text-neutral-100 font-mono">
                         {colorInfo.name}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-neutral-400">
                         {colorInfo.completed}/{colorInfo.total} ({progressPercentage}%)
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="flex items-center space-x-2">
                     {isCompleted && (
-                      <div className="text-green-500">
+                      <div className="text-neutral-400">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
                       </div>
                     )}
                     {isSelected && (
-                      <div className="text-blue-500">
+                      <div className="text-neutral-400">
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                         </svg>
@@ -138,10 +138,10 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
                 </div>
 
                 {/* 进度条 */}
-                <div className="mt-2 w-full bg-gray-200 rounded-full h-1.5">
-                  <div 
+                <div className="mt-2 w-full bg-neutral-800 rounded-full h-1.5">
+                  <div
                     className={`h-1.5 rounded-full transition-all ${
-                      isCompleted ? 'bg-green-500' : 'bg-blue-500'
+                      isCompleted ? 'bg-neutral-700' : 'bg-neutral-700'
                     }`}
                     style={{ width: `${progressPercentage}%` }}
                   />
@@ -152,10 +152,10 @@ const ColorPanel: React.FC<ColorPanelProps> = ({
         </div>
 
         {/* 关闭按钮 */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-neutral-700">
           <button
             onClick={onClose}
-            className="w-full py-3 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors"
+            className="w-full py-3 bg-neutral-700 text-white rounded-lg hover:bg-neutral-700 transition-colors"
           >
             关闭
           </button>

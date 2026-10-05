@@ -2,11 +2,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { MappedPixel } from '../../utils/pixelation';
-import { 
-  getAllConnectedRegions, 
-  isRegionCompleted, 
-  getRegionCenter, 
-  sortRegionsByDistance, 
+import {
+  getAllConnectedRegions,
+  isRegionCompleted,
+  getRegionCenter,
+  sortRegionsByDistance,
   sortRegionsBySize,
   getConnectedRegion
 } from '../../utils/floodFillUtils';
@@ -24,30 +24,30 @@ interface FocusModeState {
   // 当前状态
   currentColor: string;
   selectedCell: { row: number; col: number } | null;
-  
+
   // 画布状态
   canvasScale: number;
   canvasOffset: { x: number; y: number };
-  
+
   // 进度状态
   completedCells: Set<string>;
   colorProgress: Record<string, { completed: number; total: number }>;
-  
+
   // 引导状态 - 改为区域推荐
   recommendedRegion: { row: number; col: number }[] | null;
   recommendedCell: { row: number; col: number } | null; // 保留用于定位显示
   guidanceMode: 'nearest' | 'largest' | 'edge-first';
-  
+
   // UI状态
   showColorPanel: boolean;
   showSettingsPanel: boolean;
   isPaused: boolean;
-  
+
   // 计时器状态
   startTime: number; // 开始时间戳
   totalElapsedTime: number; // 总计用时（秒）
   lastResumeTime: number; // 最后一次恢复的时间戳
-  
+
   // 显示设置
   gridSectionInterval: number; // 网格分区间隔
   showSectionLines: boolean; // 是否显示分割线
@@ -81,7 +81,7 @@ export default function FocusMode() {
     lastResumeTime: Date.now(),
     gridSectionInterval: 10,
     showSectionLines: true,
-    sectionLineColor: '#007acc',
+    sectionLineColor: '#858585',
     enableCelebration: true,
     showCelebration: false,
     showCompletionCard: false
@@ -98,7 +98,7 @@ export default function FocusMode() {
   // 计时器管理
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
-    
+
     if (!focusState.isPaused) {
       interval = setInterval(() => {
         setFocusState(prev => {
@@ -112,7 +112,7 @@ export default function FocusMode() {
         });
       }, 1000); // 每秒更新一次
     }
-    
+
     return () => {
       if (interval) {
         clearInterval(interval);
@@ -135,7 +135,7 @@ export default function FocusMode() {
 
         setMappedPixelData(pixelData);
         setGridDimensions(dimensions);
-        
+
         // 设置色号系统 - 已移除未使用的状态
 
         // 计算颜色进度
@@ -180,9 +180,9 @@ export default function FocusMode() {
 
     // 获取当前颜色的所有连通区域
     const allRegions = getAllConnectedRegions(mappedPixelData, focusState.currentColor);
-    
+
     // 筛选出未完成的区域
-    const incompleteRegions = allRegions.filter(region => 
+    const incompleteRegions = allRegions.filter(region =>
       !isRegionCompleted(region, focusState.completedCells)
     );
 
@@ -196,11 +196,11 @@ export default function FocusMode() {
     switch (focusState.guidanceMode) {
       case 'nearest':
         // 找最近的区域（相对于上一个完成的格子或中心点）
-        const referencePoint = focusState.selectedCell ?? { 
-          row: Math.floor(mappedPixelData.length / 2), 
-          col: Math.floor(mappedPixelData[0].length / 2) 
+        const referencePoint = focusState.selectedCell ?? {
+          row: Math.floor(mappedPixelData.length / 2),
+          col: Math.floor(mappedPixelData[0].length / 2)
         };
-        
+
         const sortedByDistance = sortRegionsByDistance(incompleteRegions, referencePoint);
         selectedRegion = sortedByDistance[0];
         break;
@@ -215,13 +215,13 @@ export default function FocusMode() {
         // 优先选择包含边缘格子的区域
         const M = mappedPixelData.length;
         const N = mappedPixelData[0].length;
-        const edgeRegions = incompleteRegions.filter(region => 
-          region.some(cell => 
+        const edgeRegions = incompleteRegions.filter(region =>
+          region.some(cell =>
             cell.row === 0 || cell.row === M - 1 ||
             cell.col === 0 || cell.col === N - 1
           )
         );
-        
+
         if (edgeRegions.length > 0) {
           selectedRegion = edgeRegions[0];
         } else {
@@ -235,20 +235,20 @@ export default function FocusMode() {
 
     // 计算区域中心作为推荐显示位置
     const centerCell = getRegionCenter(selectedRegion);
-    
-    return { 
-      region: selectedRegion, 
-      cell: centerCell 
+
+    return {
+      region: selectedRegion,
+      cell: centerCell
     };
   }, [mappedPixelData, focusState.currentColor, focusState.completedCells, focusState.selectedCell, focusState.guidanceMode]);
 
   // 更新推荐区域
   useEffect(() => {
     const { region, cell } = calculateRecommendedRegion();
-    setFocusState(prev => ({ 
-      ...prev, 
+    setFocusState(prev => ({
+      ...prev,
       recommendedRegion: region,
-      recommendedCell: cell 
+      recommendedCell: cell
     }));
   }, [calculateRecommendedRegion]);
 
@@ -262,14 +262,14 @@ export default function FocusMode() {
     if (cellColor === focusState.currentColor) {
       // 获取点击位置的连通区域
       const region = getConnectedRegion(mappedPixelData, row, col, focusState.currentColor);
-      
+
       if (region.length === 0) return;
 
       const newCompletedCells = new Set(focusState.completedCells);
-      
+
       // 检查区域是否已完成
       const isCurrentlyCompleted = isRegionCompleted(region, focusState.completedCells);
-      
+
       if (isCurrentlyCompleted) {
         // 如果区域已完成，取消整个区域的完成状态
         region.forEach(({ row: r, col: c }) => {
@@ -285,7 +285,7 @@ export default function FocusMode() {
       // 更新进度
       const newColorProgress = { ...focusState.colorProgress };
       let colorJustCompleted = false;
-      
+
       if (newColorProgress[focusState.currentColor]) {
         const oldCompleted = newColorProgress[focusState.currentColor].completed;
         const newCompleted = Array.from(newCompletedCells)
@@ -293,9 +293,9 @@ export default function FocusMode() {
             const [r, c] = key.split(',').map(Number);
             return mappedPixelData[r]?.[c]?.color === focusState.currentColor;
           }).length;
-        
+
         newColorProgress[focusState.currentColor].completed = newCompleted;
-        
+
         // 检测颜色是否刚刚完成
         const total = newColorProgress[focusState.currentColor].total;
         if (oldCompleted < total && newCompleted === total && focusState.enableCelebration) {
@@ -352,32 +352,32 @@ export default function FocusMode() {
   // 处理定位到推荐位置
   const handleLocateRecommended = useCallback(() => {
     if (!focusState.recommendedCell || !gridDimensions) return;
-    
+
     const { row, col } = focusState.recommendedCell;
-    
+
     // 计算格子大小（与FocusCanvas中的计算保持一致）
     const cellSize = Math.max(15, Math.min(40, 300 / Math.max(gridDimensions.N, gridDimensions.M)));
-    
+
     // 计算目标格子在画布上的中心位置（像素坐标）
     const targetX = (col + 0.5) * cellSize;
     const targetY = (row + 0.5) * cellSize;
-    
+
     // 计算画布总尺寸
     const canvasWidth = gridDimensions.N * cellSize;
     const canvasHeight = gridDimensions.M * cellSize;
-    
+
     // 简单的定位逻辑：
     // 1. 将目标位置移到画布的中心位置
     // 2. 考虑缩放的影响
-    
+
     // 画布中心位置
     const canvasCenterX = canvasWidth / 2;
     const canvasCenterY = canvasHeight / 2;
-    
+
     // 计算从目标位置到画布中心的偏移量
     const offsetX = canvasCenterX - targetX;
     const offsetY = canvasCenterY - targetY;
-    
+
     // 更新状态
     setFocusState(prev => ({
       ...prev,
@@ -390,7 +390,7 @@ export default function FocusMode() {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
-    
+
     if (hours > 0) {
       return `${hours}:${minutes.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     } else {
@@ -424,10 +424,10 @@ export default function FocusMode() {
   // 处理庆祝动画完成
   const handleCelebrationComplete = useCallback(() => {
     setFocusState(prev => ({ ...prev, showCelebration: false }));
-    
+
     // 检查是否所有颜色都完成了
     const allCompleted = availableColors.every(color => color.completed >= color.total);
-    
+
     if (allCompleted) {
       // 所有颜色都完成了，显示打卡图
       setFocusState(prev => ({ ...prev, showCompletionCard: true }));
@@ -439,7 +439,7 @@ export default function FocusMode() {
         for (let i = 1; i < availableColors.length; i++) {
           const nextIndex = (currentIndex + i) % availableColors.length;
           const nextColor = availableColors[nextIndex];
-          
+
           // 如果找到未完成的颜色，切换到该颜色
           if (nextColor.completed < nextColor.total) {
             setFocusState(prev => ({ ...prev, currentColor: nextColor.color }));
@@ -457,36 +457,36 @@ export default function FocusMode() {
 
   if (!mappedPixelData || !gridDimensions) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-800 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <p className="text-gray-600">加载中...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neutral-400 mx-auto mb-4"></div>
+          <p className="text-neutral-300">加载中...</p>
         </div>
       </div>
     );
   }
 
   const currentColorInfo = availableColors.find(c => c.color === focusState.currentColor);
-  const progressPercentage = currentColorInfo ? 
+  const progressPercentage = currentColorInfo ?
     Math.round((currentColorInfo.completed / currentColorInfo.total) * 100) : 0;
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-neutral-900">
       {/* 顶部导航栏 */}
-      <header className="h-15 bg-white shadow-sm border-b border-gray-200 px-4 py-3 flex items-center justify-between">
-        <button 
+      <header className="h-15 bg-neutral-900 shadow-sm border-b border-neutral-700 px-4 py-3 flex items-center justify-between">
+        <button
           onClick={() => window.history.back()}
-          className="flex items-center text-gray-600 hover:text-gray-800"
+          className="flex items-center text-neutral-300 hover:text-neutral-100"
         >
           <svg className="w-6 h-6 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
           返回
         </button>
-        <h1 className="text-lg font-medium text-gray-800">专心拼豆（AlphaTest）</h1>
-        <button 
+        <h1 className="text-lg font-medium text-neutral-100">专心拼豆（AlphaTest）</h1>
+        <button
           onClick={() => setFocusState(prev => ({ ...prev, showSettingsPanel: true }))}
-          className="text-gray-600 hover:text-gray-800"
+          className="text-neutral-300 hover:text-neutral-100"
         >
           <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -496,7 +496,7 @@ export default function FocusMode() {
       </header>
 
       {/* 当前颜色状态栏 */}
-      <ColorStatusBar 
+      <ColorStatusBar
         currentColor={focusState.currentColor}
         colorInfo={currentColorInfo}
         progressPercentage={progressPercentage}
@@ -523,14 +523,14 @@ export default function FocusMode() {
       </div>
 
       {/* 快速进度条 */}
-      <ProgressBar 
+      <ProgressBar
         progressPercentage={progressPercentage}
         recommendedCell={focusState.recommendedCell}
         colorInfo={currentColorInfo}
       />
 
       {/* 底部工具栏 */}
-      <ToolBar 
+      <ToolBar
         onColorSelect={() => setFocusState(prev => ({ ...prev, showColorPanel: true }))}
         onLocate={handleLocateRecommended}
         onPause={handlePauseToggle}

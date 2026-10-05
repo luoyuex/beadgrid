@@ -1,8 +1,20 @@
 @import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  *, ::before, ::after { border-color: #303030; }
+}
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  color-scheme: dark;
+  --background: #0a0a0a;
+  --foreground: #ececec;
+  --surface: #181818;
+  --surface-raised: #202020;
+  --border: #303030;
+  --muted: #a3a3a3;
+  --font-geist-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  --font-geist-mono: ui-monospace, SFMono-Regular, Consolas, monospace;
 }
 
 @theme inline {
@@ -10,17 +22,63 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-neutral-50: #fafafa;
+  --color-neutral-100: #f0f0f0;
+  --color-neutral-200: #dedede;
+  --color-neutral-300: #c4c4c4;
+  --color-neutral-400: #a3a3a3;
+  --color-neutral-500: #858585;
+  --color-neutral-600: #525252;
+  --color-neutral-700: #303030;
+  --color-neutral-800: #242424;
+  --color-neutral-900: #181818;
+  --color-neutral-950: #0a0a0a;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), system-ui, "PingFang SC", "Microsoft YaHei", sans-serif;
+  min-width: 320px;
+}
+
+:where(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid #dedede;
+  outline-offset: 3px;
+}
+:where(input, select, textarea) {
+  accent-color: #dedede;
+  border-color: var(--border);
+}
+:where(input, textarea)::placeholder { color: #858585; }
+:where(button:not(:disabled), select, a) { cursor: pointer; }
+::selection { background: #dedede; color: #0a0a0a; }
+
+.account-nav {
+  min-height: 64px;
+  background: #101010;
+  border-color: #262626;
+  padding-inline: clamp(20px, 4vw, 64px);
+}
+.account-nav a:hover, .account-nav button:hover { color: #fff; }
+.workspace-hero { width: 100%; max-width: 896px; padding: 40px 0 28px; }
+.workspace-hero-content { position: relative; }
+.workspace-eyebrow { margin-bottom: 16px; color: #a3a3a3; font-size: 11px; letter-spacing: .18em; }
+.workspace-heading { display: flex; align-items: center; gap: 18px; }
+.workspace-heading h1 { color: #f0f0f0; font-size: clamp(27px, 4vw, 42px); font-weight: 600; letter-spacing: -.04em; line-height: 1.15; }
+.workspace-logo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 3px; padding: 8px; width: 52px; height: 52px; flex-shrink: 0; border-radius: 12px; border: 1px solid #3b3b3b; background: #202020; }
+.workspace-logo span { border-radius: 2px; background: #dedede; }
+.workspace-logo span:nth-child(3n) { background: #737373; }
+.workspace-logo span:nth-child(4n) { background: #a3a3a3; }
+.workspace-description { margin-top: 20px; max-width: 560px; color: #a3a3a3; font-size: 14px; line-height: 1.8; }
+.workspace-meta { display: inline-flex; margin-top: 18px; padding: 6px 10px; border: 1px solid #303030; border-radius: 7px; color: #c4c4c4; background: #181818; font-size: 11px; }
+body > main { min-height: calc(100vh - 180px); }
+body > main > section { border-radius: 14px; }
+@media (max-width: 640px) {
+  .workspace-hero { padding-top: 28px; }
+  .workspace-heading { gap: 12px; }
+  .account-nav { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; animation-iteration-count: 1 !important; }
 }
