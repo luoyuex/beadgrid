@@ -16,7 +16,8 @@ export function renderFiles(payload) {
   const canvasWidth = Math.max(600, width * cell + margin * 2);
   const columns = Math.max(1, Math.floor((canvasWidth - 40) / 220));
   const statsHeight = 80 + Math.ceil(stats.length / columns) * 36;
-  const pattern = createCanvas(canvasWidth, 80 + height * cell + margin * 2 + (options.includeStats ? statsHeight : 0));
+  const watermarkHeight = 36;
+  const pattern = createCanvas(canvasWidth, 80 + height * cell + margin * 2 + (options.includeStats ? statsHeight : 0) + watermarkHeight);
   const ctx = pattern.getContext('2d');
   ctx.fillStyle = '#FFFFFF'; ctx.fillRect(0, 0, pattern.width, pattern.height);
   ctx.fillStyle = '#1F2937'; ctx.fillRect(0, 0, pattern.width, 60);
@@ -50,8 +51,18 @@ export function renderFiles(payload) {
     stats.forEach(([hex, count], i) => { const x = 20 + (i % columns) * 220, y = offset + 50 + Math.floor(i / columns) * 36; c.fillStyle = hex; c.fillRect(x, y, 24, 24); c.strokeStyle = '#9CA3AF'; c.lineWidth = 1; c.strokeRect(x, y, 24, 24); c.fillStyle = '#111827'; c.font = `16px "${font}"`; c.fillText(`${key(hex, system)} × ${count}`, x + 34, y + 18); });
   }
   if (options.includeStats) drawStats(pattern, top + height * cell + margin);
-  const shopping = createCanvas(canvasWidth, statsHeight);
+  function drawWatermark(target) {
+    const c = target.getContext('2d');
+    c.save();
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    c.font = `14px "${font}"`; c.fillStyle = '#858585';
+    c.fillText('豆格 BeadGrid · 把创意，变成拼豆图纸。', target.width - 20, target.height - watermarkHeight / 2);
+    c.restore();
+  }
+  drawWatermark(pattern);
+  const shopping = createCanvas(canvasWidth, statsHeight + watermarkHeight);
   const shoppingCtx = shopping.getContext('2d'); shoppingCtx.fillStyle = '#FFFFFF'; shoppingCtx.fillRect(0, 0, shopping.width, shopping.height); drawStats(shopping, 0);
+  drawWatermark(shopping);
   const files = [{ name: 'pattern.png', type: 'image/png', body: pattern.toBuffer('image/png') }, { name: 'shopping-list.png', type: 'image/png', body: shopping.toBuffer('image/png') }];
   if (options.exportCsv) files.push({ name: 'pattern.csv', type: 'text/csv', body: Buffer.from(grid.map(row => row.map(hex => hex || 'TRANSPARENT').join(',')).join('\n')) });
   return files;

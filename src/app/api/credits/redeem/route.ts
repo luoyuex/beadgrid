@@ -1,14 +1,4 @@
-import { db } from '@/lib/db';
-import { assertOrigin, endpoint, HttpError, json, rateLimit, readJson, requireUser } from '@/lib/http';
-import { digestCard, redeem } from '@/lib/membership/core.mjs';
-export const runtime = 'nodejs';
-export async function POST(request: Request) {
-  return endpoint(async () => {
-    assertOrigin(request);
-    const user = await requireUser();
-    await rateLimit(`redeem:${user.id}`, 5);
-    const body = await readJson(request);
-    if (!body || typeof body !== 'object') throw new HttpError(400, '请求无效');
-    return json(await redeem(db, user.id, digestCard(body.code, process.env.CARD_HASH_SECRET)));
-  });
+// Explicitly retire the old credit endpoint; stale clients must refresh.
+export async function POST() {
+  return Response.json({ error: '次数制已停用，请刷新页面并使用会员兑换入口' }, { status: 410 });
 }

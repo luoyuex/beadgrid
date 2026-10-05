@@ -13,12 +13,14 @@ test('server renderer outputs real PNGs and lossless CSV for all brands', async 
     const files = renderFiles(validateExport(input(system), mapping));
     assert.deepEqual(files.map(file => file.name), ['pattern.png', 'shopping-list.png', 'pattern.csv']);
     assert.equal(files[2].body.toString(), `${a},${b}\n${a},TRANSPARENT`);
-    const image = await loadImage(files[0].body); assert.equal(image.width, 600); assert.equal(image.height, 164);
+    const image = await loadImage(files[0].body); assert.equal(image.width, 600); assert.equal(image.height, 200);
     const canvas = createCanvas(image.width, image.height), ctx = canvas.getContext('2d'); ctx.drawImage(image, 0, 0);
     const pixel = (x, y) => [...ctx.getImageData(x, y, 1, 1).data];
     const rgb = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16)).concat(255);
     assert.deepEqual(pixel(27, 107), rgb(a)); assert.deepEqual(pixel(57, 107), rgb(b)); assert.deepEqual(pixel(57, 137), [255, 255, 255, 255]);
-    assert.equal((await loadImage(files[1].body)).height, 116);
+    assert.equal((await loadImage(files[1].body)).height, 152);
+    const footer = ctx.getImageData(20, image.height - 36, image.width - 40, 36).data;
+    assert.ok(footer.some((value, i) => i % 4 !== 3 && value < 255), '图纸底部应包含品牌水印');
   }
 });
 test('settings affect rendered dimensions and optional CSV; invalid font fails', () => {

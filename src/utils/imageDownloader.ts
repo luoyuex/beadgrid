@@ -111,7 +111,6 @@ export async function downloadImage(input: {
 }): Promise<boolean> {
   if (exporting) return false;
   if (!input.mappedPixelData || !input.gridDimensions) { alert('请先生成图纸'); return false; }
-  if (!confirm('导出成功消耗 1 次；相同图纸和设置重复下载不扣费。是否继续？')) return false;
   exporting = true;
   try {
     const data = await api('/api/exports', {
@@ -120,7 +119,6 @@ export async function downloadImage(input: {
       selectedColorSystem: input.selectedColorSystem,
       options: input.options,
     });
-    window.dispatchEvent(new Event('credits-changed'));
     showDownloads(data.files, data.cached);
     return true;
   } catch (error) {
@@ -134,9 +132,9 @@ function showDownloads(files: { name: string; url: string }[], cached: boolean) 
   const panel = document.createElement('div');
   panel.style.cssText = 'background:#181818;color:#ececec;padding:28px;border-radius:16px;max-width:420px;width:100%';
   panel.setAttribute('role', 'dialog'); panel.setAttribute('aria-modal', 'true'); panel.setAttribute('aria-label', '导出完成');
-  const title = document.createElement('p'); title.textContent = cached ? '下载已生成的成品，本次未扣费。' : '导出成功，已扣 1 次。'; panel.appendChild(title);
+  const title = document.createElement('p'); title.textContent = cached ? '图纸已生成，可直接下载。' : '导出成功，请下载图纸与采购清单。'; panel.appendChild(title);
   for (const file of files) { const a = document.createElement('a'); a.href = file.url; a.textContent = '下载 ' + file.name; a.style.cssText = 'display:block;color:#dedede;margin:16px 0'; panel.appendChild(a); }
-  const note = document.createElement('p'); note.textContent = '链接有效期 5 分钟，历史文件可在个人中心重新下载。'; note.style.fontSize = '12px'; panel.appendChild(note);
+  const note = document.createElement('p'); note.textContent = '链接最多有效 5 分钟，会员到期时失效。有效期内可在个人中心重新下载。'; note.style.fontSize = '12px'; panel.appendChild(note);
   const close = document.createElement('button'); close.textContent = '关闭'; close.style.cssText = 'padding:10px 16px;margin-top:16px;border:1px solid #525252;border-radius:8px';
   const dismiss = () => { document.removeEventListener('keydown', escape); overlay.remove(); };
   const escape = (event: KeyboardEvent) => { if (event.key === 'Escape') dismiss(); };

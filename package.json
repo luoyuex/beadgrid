@@ -1,6 +1,6 @@
 {
   "name": "beadgrid",
-  "description": "Image-to-pattern bead studio with editing, exports, and credit-based membership.",
+  "description": "Image-to-pattern bead studio with editing, exports, and duration-based membership.",
   "version": "0.1.0",
   "private": true,
   "scripts": {

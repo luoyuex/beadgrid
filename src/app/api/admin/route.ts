@@ -1,7 +1,7 @@
 import { db } from '@/lib/db';
 import type { Prisma } from '@prisma/client';
 import { assertOrigin, endpoint, HttpError, json, rateLimit, readJson, requireUser } from '@/lib/http';
-import { digestCard, newCard, serial, releaseExport } from '@/lib/membership/core.mjs';
+import { digestCard, newCard, serial, releaseExport, adjustMembership } from '@/lib/membership/core.mjs';
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export async function GET(request: Request) {
@@ -16,9 +16,9 @@ export async function GET(request: Request) {
       const where = ['UNUSED', 'REDEEMED', 'DISABLED'].includes(status || '') ? { status: status! } : {};
       return json({ items: await db.card.findMany({ where, skip, take: 50, orderBy: { batch: { createdAt: 'desc' } }, select: { id: true, suffix: true, status: true, redeemedAt: true, batch: true, redemption: { select: { userId: true } } } }) });
     }
-    if (kind === 'ledger') return json({ items: await db.ledger.findMany({ where: { userId: query.get('userId') || '' }, skip, take: 50, orderBy: { createdAt: 'desc' } }) });
+    if (kind === 'events') return json({ items: await db.membershipEvent.findMany({ where: { userId: query.get('userId') || '' }, skip, take: 50, orderBy: { createdAt: 'desc' } }) });
     if (kind === 'audit') return json({ items: await db.audit.findMany({ skip, take: 50, orderBy: { createdAt: 'desc' } }) });
-    return json({ items: await db.user.findMany({ where: query.get('email') ? { email: { contains: query.get('email')!, mode: 'insensitive' } } : {}, skip, take: 50, orderBy: { createdAt: 'desc' }, select: { id: true, email: true, role: true, banned: true, wallet: true } }) });
+    return json({ items: await db.user.findMany({ where: query.get('email') ? { email: { contains: query.get('email')!, mode: 'insensitive' } } : {}, skip, take: 50, orderBy: { createdAt: 'desc' }, select: { id: true, email: true, role: true, banned: true, membership: true } }) });
   });
 }
 export async function POST(request: Request) {
@@ -40,13 +40,13 @@ export async function POST(request: Request) {
       const actor = await tx.user.findUnique({ where: { id: admin.id } });
       if (!actor || actor.banned || actor.role !== 'ADMIN') throw new HttpError(403, '需要管理员权限');
       if (body.action === 'cards') {
-        if (!Number.isInteger(body.count) || body.count < 1 || body.count > 500 || !Number.isInteger(body.credits) || body.credits < 1 || body.credits > 100000) throw new HttpError(400, '数量应为 1–500，次数应为 1–100000');
+        if (!Number.isInteger(body.count) || body.count < 1 || body.count > 500 || !Number.isInteger(body.durationDays) || body.durationDays < 1 || body.durationDays > 36500) throw new HttpError(400, '数量应为 1–500，会员天数应为 1–36500');
         const expiresAt = body.expiresAt ? new Date(body.expiresAt) : null;
         if (expiresAt && (!Number.isFinite(expiresAt.getTime()) || expiresAt <= new Date())) throw new HttpError(400, '兑换截止时间必须在未来');
         const codes = Array.from({ length: body.count }, () => newCard());
-        const batch = await tx.cardBatch.create({ data: { credits: body.credits, count: body.count, expiresAt, cards: { create: codes.map(code => ({ digest: digestCard(code, process.env.CARD_HASH_SECRET), suffix: code.slice(-5) })) } } });
-        await tx.audit.create({ data: audit('CREATE_CARDS', batch.id, { count: body.count, credits: body.credits, expiresAt: expiresAt?.toISOString() || null }) });
-        return { batchId: batch.id, credits: batch.credits, codes };
+        const batch = await tx.cardBatch.create({ data: { durationDays: body.durationDays, count: body.count, expiresAt, cards: { create: codes.map(code => ({ digest: digestCard(code, process.env.CARD_HASH_SECRET), suffix: code.slice(-5) })) } } });
+        await tx.audit.create({ data: audit('CREATE_CARDS', batch.id, { count: body.count, durationDays: body.durationDays, expiresAt: expiresAt?.toISOString() || null }) });
+        return { batchId: batch.id, durationDays: batch.durationDays, codes };
       }
       if (body.action === 'disable') {
         if (typeof body.cardId !== 'string') throw new HttpError(400, '请选择卡密');
@@ -65,13 +65,10 @@ export async function POST(request: Request) {
         await tx.audit.create({ data: audit('SET_BAN', body.userId, { banned: body.banned, reason: body.reason }) });
         return { ok: true };
       }
-      if (body.action !== 'adjust' || !Number.isInteger(body.delta) || body.delta === 0 || Math.abs(body.delta) > 100000) throw new HttpError(400, '调账次数必须为非零整数且不超过 100000');
-      const wallet = await tx.wallet.upsert({ where: { userId: body.userId }, create: { userId: body.userId }, update: {} });
-      if (wallet.balance + body.delta < wallet.reserved || wallet.balance + body.delta > 2000000000) throw new HttpError(409, '可用余额不足或超出余额上限');
-      const record = await tx.audit.create({ data: audit('ADJUST_CREDITS', body.userId, { delta: body.delta, reason: body.reason }) });
-      await tx.wallet.update({ where: { userId: body.userId }, data: { balance: { increment: body.delta } } });
-      await tx.ledger.create({ data: { userId: body.userId, delta: body.delta, reason: `人工调账：${body.reason}`, reference: `audit:${record.id}` } });
-      return { ok: true };
+      if (body.action !== 'adjust' || !Number.isInteger(body.days) || body.days === 0 || Math.abs(body.days) > 36500) throw new HttpError(400, '调整天数必须为非零整数且不超过 36500');
+      const record = await tx.audit.create({ data: audit('ADJUST_MEMBERSHIP', body.userId, { days: body.days, reason: body.reason }) });
+      const membership = await adjustMembership(tx, body.userId, body.days, `管理员调整：${body.reason}`, `audit:${record.id}`);
+      return { ok: true, membership };
     }));
   });
 }

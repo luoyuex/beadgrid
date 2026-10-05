@@ -101,8 +101,8 @@ export default function Home() {
   const [originalImageSrc, setOriginalImageSrc] = useState<string | null>(null);
   const [granularity, setGranularity] = useState<number>(50);
   const [granularityInput, setGranularityInput] = useState<string>("50");
-  const [similarityThreshold, setSimilarityThreshold] = useState<number>(30);
-  const [similarityThresholdInput, setSimilarityThresholdInput] = useState<string>("30");
+  const [similarityThreshold, setSimilarityThreshold] = useState<number>(1);
+  const [similarityThresholdInput, setSimilarityThresholdInput] = useState<string>("1");
   // 添加像素化模式状态
   const [pixelationMode, setPixelationMode] = useState<PixelationMode>(PixelationMode.Dominant); // 默认为卡通模式
 
@@ -1973,7 +1973,7 @@ export default function Home() {
             <h1>把创意，变成拼豆图纸。</h1>
           </div>
           <p className="workspace-description">上传图片，选择色板，精细调整每一个像素。图纸与采购清单，让下一件作品从这里开始。</p>
-          <span className="workspace-meta">免费预览与编辑 · 成品按次导出</span>
+          <span className="workspace-meta">免费预览与编辑 · 会员有效期内不限导出</span>
 
           {/* 横屏设备弹窗 */}
           {showDesktopModal && (
