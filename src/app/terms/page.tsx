@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Terms() { return <main className="mx-auto max-w-2xl space-y-5 px-5 py-12"><h1 className="text-2xl font-bold">豆格使用条款</h1><p>豆格提供图片预览、拼豆编辑和会员图纸导出服务。预览与编辑免费；会员通过兑换码开通，有效期内不限导出。</p><p>请使用你有权处理的图片，妥善保存账号密码，不分享邮箱验证码。会员到期时间和兑换记录可在个人中心查看。</p><p>兑换码只能使用一次，会员未到期时续期会顺延，到期后从兑换时间起算。导出仍受请求频率、图纸尺寸及文件大小限制。</p><p>服务基于 AGPL-3.0 开源项目二次开发，可通过页脚获取对应源码。</p><Link className="underline" href="/login">返回登录注册</Link></main>; }

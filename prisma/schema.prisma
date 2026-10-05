@@ -9,6 +9,8 @@ model User {
   id            String @id
   name          String
   email         String @unique
+  username      String? @unique
+  displayUsername String?
   emailVerified Boolean @default(false)
   image         String?
   createdAt     DateTime @default(now())

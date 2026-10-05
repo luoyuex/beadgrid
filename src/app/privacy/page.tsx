@@ -1,0 +1,2 @@
+import Link from 'next/link';
+export default function Privacy() { return <main className="mx-auto max-w-2xl space-y-5 px-5 py-12"><h1 className="text-2xl font-bold">豆格隐私说明</h1><p>我们使用邮箱、用户名、经过哈希的密码及会话信息提供注册和登录。邮箱用于发送注册、登录和密码重置验证码；验证码有时效和尝试次数限制。</p><p>图片预览与编辑在浏览器完成。正式导出时，编辑后的网格和导出设置会发送至服务器，生成文件存放于私有对象存储。会员有效期、兑换和导出记录保存在数据库。</p><p>会话和注册验证凭证使用 Cookie 保存。私有导出文件通过短期签名链接下载，请不要向他人转发下载链接。</p><p>运营者应通过网站提供的联系方式处理账号与数据请求；正式上线前应补充运营主体及联系信息。</p><Link className="underline" href="/login">返回登录注册</Link></main>; }
